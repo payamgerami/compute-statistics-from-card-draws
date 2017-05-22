@@ -1,0 +1,85 @@
+---
+title: "Compute Statistics from Card Draws"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+#install.packages('ggplot2')
+#install.packages('dplyr')
+library(ggplot2)
+library(dplyr)
+```
+
+## Card Values
+
+```{r}
+card = c('As','2s','3s','4s','5s','6s','7s','8s','9s','10s','Js','Qs','Ks',
+         'Ah','2h','3h','4h','5h','6h','7h','8h','9h','10h','Jh','Qh','Kh',
+         'Ad','2d','3d','4d','5d','6d','7d','8d','9d','10d','Jd','Qd','Kd',
+         'Ac','2c','3c','4c','5c','6c','7c','8c','9c','10c','Jc','Qc','Kc')
+value = c(1,2,3,4,5,6,7,8,9,10,10,10,10,
+          1,2,3,4,5,6,7,8,9,10,10,10,10,
+          1,2,3,4,5,6,7,8,9,10,10,10,10,
+          1,2,3,4,5,6,7,8,9,10,10,10,10)
+cards = data.frame(card,value)
+```
+
+
+### Histogram of Card Values
+
+```{r, message=FALSE, warning=FALSE, fig.height=4}
+ggplot(aes(x=value), data=cards) +
+  geom_histogram()
+```
+
+### Statistics of the Value Distribution
+
+```{r}
+summary(cards$value)
+correction <- sqrt((length(cards$value)-1)/length(cards$value))
+sd(cards$value)*correction
+```
+
+The mean is 6.54, the median is 7.0 and the standard deviation is 3.15.
+
+## Sampled Values 
+
+```{r}
+draws = read.csv('draws.csv')
+
+sumFunc <- function(f,s,t) cards[c(card == f),]$value + 
+                           cards[c(card == s),]$value + 
+                           cards[c(card == t),]$value
+
+sums <-data.frame(sum = apply(draws, 1, function(d) sumFunc(d['first'],d['second'],d['third'])))
+```
+
+### Histogram of Sample values
+
+```{r, message=FALSE, warning=FALSE, fig.height=4}
+ggplot(aes(x=sum), data=sums) +
+  geom_histogram()
+```
+
+### Statistics of Sample values
+
+```{r}
+summary(sums)
+sd(sums$sum)
+var(sums$sum)
+```
+
+The sample mean is 19.00. The sample median is 18.5. The sample standard deviation is 5.53. The sample variance is 30.55. The interquartile range is 7.
+
+### Estimations based on the sampled distribution
+
+What range of values do you expect 90% of three-card draw sums to fall into?
+
+90% of all draw sums should fall between 10 and 28.
+
+How likely are you to get a draw of at least 20 from a random draw?
+
+Draws of at least 20 should occur with probability approximately 0.4640.
+
