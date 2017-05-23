@@ -75,11 +75,26 @@ The sample mean is 19.00. The sample median is 18.5. The sample standard deviati
 
 ### Estimations based on the sampled distribution
 
-What range of values do you expect 90% of three-card draw sums to fall into?
+**What range of values do you expect 90% of three-card draw sums to fall into?**
+
+90% of all draw sums are between probability 5% and 95%. Z-score for these probabilities are +-1.645.
+
+```{r}
+x1 <- (1.645 * 5.53) + 19
+x2 <- (-1.645 * 5.53) + 19
+x1
+x2
+```
 
 90% of all draw sums should fall between 10 and 28.
 
-How likely are you to get a draw of at least 20 from a random draw?
+**How likely are you to get a draw of at least 20 from a random draw?**
+
+```{r}
+z <- (20 - 19) / 5.53
+p <- 1 - 0.536
+p
+```
 
 Draws of at least 20 should occur with probability approximately 0.4640.
 
